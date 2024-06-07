@@ -50,6 +50,12 @@ scene("startMenu", () => {
         z(0),
         "bg",
      ]);
+     add([
+        text("by AnJoMorto", { size: 25 }),
+        pos(W - 30, H - 30),
+        anchor("botright"),
+        color(WHITE),
+    ]);
      const startButton = add([
         rect(400, 100, { radius: 15 }),
         anchor("center"),
@@ -161,7 +167,10 @@ scene("game", () => {
         pos(W/2, H/2 + 270),
         z(2),
     ])
+    let check = 0;
+    let balancing = 0;
     loop(0.7, () => {
+        console.log(balancing)
         time--;
         for (let i = 0; i < randi(0,4); i++) {
             let randIngr = choose(ingr)
@@ -180,6 +189,34 @@ scene("game", () => {
                 randIngr,
             ])
             jumpIngr.jump(rand(670, 1050))
+            if(randIngr != order[nextIngr] && nextIngr != 4 && nextIngr != 5 && nextIngr != 6){
+                check++;
+            } else {
+                check = 0;
+                balancing = 0;
+            }
+        }
+        if(check > 0){
+            balancing++;
+        }
+        if(balancing > 3 && randi(3) == 1){
+            console.log("spawing");
+            const jumpIngr = add([
+                pos(rand(W), H-25),
+                z(10),
+                sprite(order[nextIngr]),
+                anchor("center"),
+                scale(INGR_SCALE * 1.2),
+                area({collisionIgnore:["jumpIngr"],scale:0.75}),
+                body(),
+                move(choose([LEFT, RIGHT]), rand(30, 150)),
+                rotate(rand(0, 360)),
+                offscreen({destroy: true}),
+                "jumpIngr",
+                order[nextIngr],
+            ])
+            jumpIngr.jump(rand(700, 1050))
+            balancing = 0;
         }
         if(time < 1){
             go("gameOver");
@@ -215,6 +252,7 @@ scene("game", () => {
                 pie.use(sprite("phase_5"));
             } else if(nextIngr == 8){
                 pie.use(sprite("phase_6"));
+                burp();
                 wait(0.5, () =>{
                     yep();
                     wait(0.5, () =>{
@@ -232,9 +270,14 @@ scene("game", () => {
             nextIngr = 0;
             nope();
             pie.use(sprite("empty"));
+            oven.use("oven_on");
+            oven.use("oven_finished");
+            oven.use("oven_off");
+            oven.use(sprite("oven_off"));
         } 
     })
     function nope(){
+        shake(1);
         const nope = add([
             sprite("x"),
             anchor("center"),
