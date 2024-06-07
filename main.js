@@ -13,7 +13,7 @@ const PIE_SCALE = 0.32;
 const CLICK_JUMP = 1.05;
 let nextIngr = 0;
 let score = 0;
-let time = 300;
+let time = 90;
 
 loadRoot('assets/');
 loadSprite('empty',"empty.png");
@@ -161,7 +161,7 @@ scene("game", () => {
         pos(W/2, H/2 + 270),
         z(2),
     ])
-    loop(1, () => {
+    loop(0.75, () => {
         time--;
         for (let i = 0; i < randi(0,4); i++) {
             let randIngr = choose(ingr)
@@ -317,7 +317,7 @@ scene("gameOver", () => {
         "button",
     ]);
     onClick("replayButton", () => {
-        time = 300;
+        time = 90;
         go("game");
     });
     // Menu button
